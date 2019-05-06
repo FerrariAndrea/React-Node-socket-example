@@ -87,9 +87,13 @@ wsServer.on('request', function(request) {
   //add this connection to array clients
   clients.push(connection);
   //send status if enable
-  if(socketActive){
-		connection.sendUTF( JSON.stringify(status));
-  }
+  /*
+	  if(socketActive){
+			connection.sendUTF( JSON.stringify(status));
+	  }
+  */
+  //send to all for see connection number increse
+  sendStatusToAll()
   // This is the most important callback for us, we'll handle
   // all messages from users here.
   /*
@@ -101,7 +105,14 @@ wsServer.on('request', function(request) {
 	*/
 	//handle close connection
   connection.on('close', function(connection) {
-    // close user connection
+    // close user connection	
 	console.log("Close connection (socket).");
+	//remove connection from clients
+	var index = clients.indexOf(connection);
+	if (index > -1) {
+	  clients.splice(index, 1);
+	}
+	 //send to all for see connection number decrese
+		sendStatusToAll()
   }); 
 });
