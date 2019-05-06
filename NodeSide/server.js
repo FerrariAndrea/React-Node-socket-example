@@ -29,8 +29,8 @@ var clients = [ ];
 //----------------------------------------------------------------------HTTP
 function onStart(req, res){//enable sending to everyone
 	console.log("onStart on HTTP");
-	socketActive=true;
-	status["Enable"]=socketActive;
+	socketActive="true";
+	status["Enable"]="true";
 	status["CountConn"] = clients.length;
 	//send to all client the new status
 	sendStatusToAll();
@@ -41,7 +41,7 @@ function onStop(req, res){//disable sending to everyone
 	
 	//send to all client the new status
 	//just for see Enable=false
-	status["Enable"]=false;
+	status["Enable"]="false";
 	status["CountConn"] = clients.length;
 	sendStatusToAll();
 	//than disable it
@@ -53,7 +53,7 @@ function setStatus(req, res){//set new status
 	console.log("setStatus on HTTP");
 	//send to all client the new status if sending is enable
 		status =req.body;
-		status["Enable"]=socketActive;
+		status["Enable"]=socketActive+"";
 		status["CountConn"] = clients.length;
 		sendStatusToAll();
 	  res.status(200).json({"onStop": "ok"});

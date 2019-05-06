@@ -9,7 +9,7 @@
 		"Temp1":"?",
 		"Temp2":"?",
 		"Cpu":"?",
-		"Enable": false,
+		"Enable": "?",
 		"CountConnections": "?",
 	  };
 	   this.handleData = this.handleData.bind(this);

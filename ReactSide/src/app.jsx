@@ -7,17 +7,14 @@ function generate(){
 		var temp1 =(Math.random() *100)+"°";
 		var temp2 =(Math.random() *100)+"°";
 		var cpu =(Math.random() *100)+"°";
-		return {"Temp1": temp1,"Temp2": temp1,"Cpu": temp1};
+		return {"Temp1": temp1,"Temp2": temp2,"Cpu": cpu};
 }
 
 class App extends React.Component  {
-	constructor() {
-		super();
-	}
-
+	
 	
 	handleStart(event) {
-	  axios.post("http://localhost:4000"+'/start', "{}").then(function (res){
+	  axios.post("http://localhost:4000/start", "{}").then(function (res){
 			console.log("HTTP request for start ris->"+JSON.parse(res.data));
         }).catch(function (err) {
             console.log("HTTP request for start FAIL->"+err);
@@ -25,7 +22,7 @@ class App extends React.Component  {
 	}	
   
 	handleStop(event) {
-	  axios.post("http://localhost:4000"+'/stop', "{}").then(function (res){
+	  axios.post("http://localhost:4000/stop", "{}").then(function (res){
 			console.log("HTTP request for stop ris->"+JSON.parse(res.data));
         }).catch(function (err) {
             console.log("HTTP request for stop FAIL->"+err);
@@ -33,7 +30,7 @@ class App extends React.Component  {
 	}	
 	
 	handleGenerate(event) {
-	  axios.post("http://localhost:4000"+'/setStatus', generate()).then(function (res){
+	  axios.post("http://localhost:4000/setStatus", generate()).then(function (res){
 			console.log("HTTP request for handleGenerate ris->"+JSON.parse(res.data));
         }).catch(function (err) {
             console.log("HTTP request for handleGenerate FAIL->"+err);
