@@ -26,12 +26,13 @@ app.listen(PORT, function(){
 var status = {"Temp1": "...","Temp2": "...","cpu":"..."}
 var socketActive = false;
 var clients = [ ];
+var count = 0;
 //----------------------------------------------------------------------HTTP
 function onStart(req, res){//enable sending to everyone
 	console.log("onStart on HTTP");
 	socketActive="true";
 	status["Enable"]="true";
-	status["CountConn"] = clients.length;
+	status["CountConn"] = count; //status["CountConn"] = clients.length;
 	//send to all client the new status
 	sendStatusToAll();
 	res.status(200).json({"onStart": "ok"});
@@ -42,7 +43,7 @@ function onStop(req, res){//disable sending to everyone
 	//send to all client the new status
 	//just for see Enable=false
 	status["Enable"]="false";
-	status["CountConn"] = clients.length;
+	status["CountConn"] = count; //status["CountConn"] = clients.length;
 	sendStatusToAll();
 	//than disable it
 	socketActive=false;
@@ -54,7 +55,7 @@ function setStatus(req, res){//set new status
 	//send to all client the new status if sending is enable
 		status =req.body;
 		status["Enable"]=socketActive+"";
-		status["CountConn"] = clients.length;
+		status["CountConn"] = count; //status["CountConn"] = clients.length;
 		sendStatusToAll();
 	  res.status(200).json({"onStop": "ok"});
 }
@@ -92,27 +93,38 @@ wsServer.on('request', function(request) {
 			connection.sendUTF( JSON.stringify(status));
 	  }
   */
+  
   //send to all for see connection number increse
-  sendStatusToAll()
+  count++;
+  status["CountConn"] = count; 
+  sendStatusToAll() 
+  
+  
   // This is the most important callback for us, we'll handle
   // all messages from users here.
-  /*
-  connection.on('message', function(message) {
-    if (message.type === 'utf8') {
-      // process WebSocket message
-    }
-  });
-	*/
+			 /*
+				  connection.on('message', function(message) {
+					if (message.type === 'utf8') {
+					  // process WebSocket message
+					}
+				  });
+			*/
 	//handle close connection
   connection.on('close', function(connection) {
     // close user connection	
 	console.log("Close connection (socket).");
-	//remove connection from clients
+	//remove connection from clients 
+	//DON'T WORK
+	/*
 	var index = clients.indexOf(connection);
+	console.log(index); //-->>> -1  :(
 	if (index > -1) {
 	  clients.splice(index, 1);
 	}
+	*/
+	count--;
+	status["CountConn"] = count; 
 	 //send to all for see connection number decrese
-		sendStatusToAll()
+	sendStatusToAll()
   }); 
 });
