@@ -25,26 +25,38 @@ app.listen(PORT, function(){
 
 var status = {"Temp1": "...","Temp2": "...","cpu":"..."}
 var socketActive = false;
+var clients = [ ];
 //----------------------------------------------------------------------HTTP
 function onStart(req, res){//enable sending to everyone
 	console.log("onStart on HTTP");
 	socketActive=true;
+	status["Enable"]=socketActive;
+	status["CountConn"] = clients.length;
 	//send to all client the new status
 	sendStatusToAll();
-	res.status(200).json({'onStart': 'ok'});
+	res.status(200).json({"onStart": "ok"});
 }
 function onStop(req, res){//disable sending to everyone
 	console.log("onStop on HTTP");
+	
+	//send to all client the new status
+	//just for see Enable=false
+	status["Enable"]=false;
+	status["CountConn"] = clients.length;
+	sendStatusToAll();
+	//than disable it
 	socketActive=false;
-	res.status(200).json({'onStop': 'ok'});
+	res.status(200).json({"onStop": "ok"});
 }
 
 function setStatus(req, res){//set new status
 	console.log("setStatus on HTTP");
 	//send to all client the new status if sending is enable
 		status =req.body;
+		status["Enable"]=socketActive;
+		status["CountConn"] = clients.length;
 		sendStatusToAll();
-	  res.status(200).json({'onStop': 'ok'});
+	  res.status(200).json({"onStop": "ok"});
 }
 
 function sendStatusToAll(){
@@ -56,7 +68,7 @@ function sendStatusToAll(){
 		}
 }
 //------------------------------------------------------------------websocket-server
-var clients = [ ];
+
 var server = http.createServer(function(request, response) {
   // process HTTP request. Since we're writing just WebSockets
   // server we don't have to implement anything.
