@@ -31,8 +31,8 @@
       return (
         <div>
 			<label>Temp1: {this.state.Temp1}</label><br/>
-			<label>Temp2: {this.state.Temp1}</label><br/>
-			<label>Cpu: {this.state.Temp1}</label><br/>
+			<label>Temp2: {this.state.Temp2}</label><br/>
+			<label>Cpu: {this.state.Cpu}</label><br/>
 			<label>Enable: {this.state.Enable}</label><br/>
 			<label>CountConnections: {this.state.CountConnections}</label><br/>
 		    <Websocket url='ws://localhost:3333' onMessage={this.handleData.bind(this)}/>

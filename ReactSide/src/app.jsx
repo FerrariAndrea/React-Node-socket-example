@@ -4,9 +4,10 @@ import StatusSocket from "./socket.jsx"
 import axios from 'axios';
 
 function generate(){
-		var temp1 =(Math.random() *100)+"°";
-		var temp2 =(Math.random() *100)+"°";
-		var cpu =(Math.random() *100)+"°";
+	
+		var cpu =(Math.floor(Math.random() *100))+"%";
+		var temp1 =(Math.floor(Math.random() *80)+20)+"°";
+		var temp2 =(Math.floor(Math.random() *80)+20)+"°";
 		return {"Temp1": temp1,"Temp2": temp2,"Cpu": cpu};
 }
 
