@@ -26,14 +26,12 @@ app.listen(PORT, function(){
 var status = {"Temp1": "...","Temp2": "...","cpu":"..."}
 var socketActive = false;
 var clients = [ ];
+var pingCount = 0;
 //var count = 0;
 //----------------------------------------------------------------------HTTP
 function onStart(req, res){//enable sending to everyone
 	console.log("onStart on HTTP");
 	socketActive="true";
-	status["Enable"]="true";
-	//status["CountConn"] = count; 
-	status["CountConn"] = clients.length;
 	//send to all client the new status
 	sendStatusToAll();
 	res.status(200).json({"onStart": "ok"});
@@ -43,9 +41,7 @@ function onStop(req, res){//disable sending to everyone
 	
 	//send to all client the new status
 	//just for see Enable=false
-	status["Enable"]="false";
-	//status["CountConn"] = count; 
-	status["CountConn"] = clients.length;
+	socketActive="false";
 	sendStatusToAll();
 	//than disable it
 	socketActive=false;
@@ -56,14 +52,14 @@ function setStatus(req, res){//set new status
 	console.log("setStatus on HTTP");
 	//send to all client the new status if sending is enable
 		status =req.body;
-		status["Enable"]=socketActive+"";
-		//status["CountConn"] = count; 
-		status["CountConn"] = clients.length;
 		sendStatusToAll();
 	  res.status(200).json({"onStop": "ok"});
 }
 
 function sendStatusToAll(){
+		status["Enable"]=socketActive+"";
+		status["CountConn"] = clients.length; 
+		status["CountPing"] = pingCount; 
 		if(socketActive){
 			console.log("Send new status to all (socket).");
 			for (var i=0; i < clients.length; i++) {
@@ -102,18 +98,21 @@ wsServer.on('request', function(request) {
 	  //count++;
 	  //status["CountConn"] = count; 
 	  status["CountConn"] = clients.length; 
-	  sendStatusToAll() 
+	  sendStatusToAll();
   
   
 	  // This is the most important callback for us, we'll handle
 	  // all messages from users here.
-				 /*
-					  connection.on('message', function(message) {
-						if (message.type === 'utf8') {
-						  // process WebSocket message
-						}
-					  });
-				*/
+				 
+	connection.on('message', function(message) {
+		//if (message.type === 'utf8') {
+		  // process WebSocket message
+		//}
+		console.log("Received new message (socket).");
+		pingCount++;
+		sendStatusToAll();
+	});
+				
 	//handle close connection
 	connection.on('close', function(connection_closed) {
 		//WARNING connection_closed is not connection
@@ -127,10 +126,8 @@ wsServer.on('request', function(request) {
 		  clients.splice(index, 1);
 		}
 		
-		//count--;
-		//status["CountConn"] =count;
-		status["CountConn"] = clients.length; 
-		 //send to all for see connection number decrese
-		sendStatusToAll()
+	
+		//send to all for see connection number decrese
+		sendStatusToAll();
   }); 
 });
