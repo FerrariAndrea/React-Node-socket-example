@@ -23,11 +23,11 @@ app.listen(PORT, function(){
   console.log('Server is running on Port:',PORT);
 });
 
-var status = {"Temp1": "...","Temp2": "...","cpu":"..."}
+var status = {"Temp1": "...","Temp2": "...","Cpu":"...","Enable":"...","CountConn":"...","CountPing":"..."}
 var socketActive = false;
 var clients = [ ];
 var pingCount = 0;
-//var count = 0;
+
 //----------------------------------------------------------------------HTTP
 function onStart(req, res){//enable sending to everyone
 	console.log("onStart on HTTP");
@@ -86,31 +86,28 @@ wsServer.on('request', function(request) {
 	  console.log("Accepted connection (socket).");
 	  //add this connection to array clients
 	  clients.push(connection);
-	  //console.log(connection);
-	  //send status if enable
-	  /*
-		  if(socketActive){
-				connection.sendUTF( JSON.stringify(status));
-		  }
-	  */
 	  
-	  //send to all for see connection number increse
-	  //count++;
-	  //status["CountConn"] = count; 
+	  //send to all for see connection number increse	  
 	  status["CountConn"] = clients.length; 
 	  sendStatusToAll();
   
   
 	  // This is the most important callback for us, we'll handle
-	  // all messages from users here.
-				 
+	  // all messages from users here.				 
 	connection.on('message', function(message) {
-		//if (message.type === 'utf8') {
+		/*
+		if (message.type === 'utf8') {
 		  // process WebSocket message
-		//}
+		}*/
 		console.log("Received new message (socket).");
-		pingCount++;
-		sendStatusToAll();
+		if (message["utf8Data"] === 'PINGMSG') {
+				pingCount++;
+				sendStatusToAll();
+		}else{
+			console.log("RECIVED UNKNOW MSG ON SOCKET!");
+		}
+		
+		
 	});
 				
 	//handle close connection
@@ -118,7 +115,7 @@ wsServer.on('request', function(request) {
 		//WARNING connection_closed is not connection
 		//so for free memory of clients array need work with connection
 		//not with connection_closed which is arg of callback "close"
-		// close user connection	
+		//close user connection	
 		console.log("Close connection (socket).");
 		//remove connection from clients (free memory)
 		var index = clients.indexOf(connection);
